@@ -51,12 +51,20 @@ class ElasticsearchQuery extends AbstractQuery {
 							}
 						}
 
-						$queryPart = [
-							'multi_match' => [
-								'query' => $values,
-								'fields' => $fields
-							]
-						];
+						$disMaxQueries = [];
+
+						foreach($values as $value)
+						{
+							$disMaxQueries[] = [
+								'multi_match' => [
+									'query' => $value,
+									'fields' => $fields,
+									'type' => 'phrase'
+								]
+							];
+						}
+
+						$queryPart['dis_max']['queries'] = $disMaxQueries;
 					}
 
 					if ('+' == $posNeg)
@@ -80,7 +88,7 @@ class ElasticsearchQuery extends AbstractQuery {
 	}
 
 	private function generateFilter() {
-		
+
 	}
 
 }

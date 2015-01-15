@@ -5,7 +5,7 @@ use Iverberk\LarasearchQuery\Exceptions\NotAllowedException;
 abstract class AbstractQuery {
 
 	/**
-	 * @var array
+	 * @var string
 	 */
 	protected $query;
 
@@ -49,7 +49,8 @@ abstract class AbstractQuery {
 	}
 
 	/**
-	 * @param $query
+	 * @param $queryString
+	 * @throws NotAllowedException
 	 * @return array
 	 */
 	protected function parseQuery($queryString)
@@ -110,3 +111,4 @@ abstract class AbstractQuery {
 		return str_replace('\\' . $delimiter, $delimiter, $parts);
 	}
 }
+

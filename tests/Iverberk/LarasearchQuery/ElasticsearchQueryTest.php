@@ -170,7 +170,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_generate_query_on_field_with_single_term()
 	{
 		$model = 'Dummy';
-		$queryString = 'field1::I';
+		$queryString = 'field1::Ivo';
 		$expected = [
 			'query' => [
 				'filtered' => [
@@ -178,9 +178,16 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'multi_match' => [
-										'query' => ['I'],
-										'fields' => ['field1', 'field1.analyzed']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Ivo',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -199,10 +206,10 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_generate_query__on_field_with_single_term_and_extra_analyzers()
+	public function it_should_generate_query_on_field_with_single_term_and_extra_analyzers()
 	{
 		$model = 'Dummy';
-		$queryString = 'field2::I';
+		$queryString = 'field2::Ivo';
 		$expected = [
 			'query' => [
 				'filtered' => [
@@ -210,9 +217,16 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'multi_match' => [
-										'query' => ['I'],
-										'fields' => ['field2', 'field2.analyzed', 'field2.word_start']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Ivo',
+													'fields' => ['field2', 'field2.analyzed', 'field2.word_start'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -234,7 +248,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_generate_and_query_on_fields_with_multiple_terms_and_extra_analyzers()
 	{
 		$model = 'Dummy';
-		$queryString = 'field1::F|field2::I';
+		$queryString = 'field1::Ivo|field2::Ferry';
 		$expected = [
 			'query' => [
 				'filtered' => [
@@ -242,15 +256,29 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'multi_match' => [
-										'query' => ['F'],
-										'fields' => ['field1', 'field1.analyzed']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Ivo',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								],
 								[
-									'multi_match' => [
-										'query' => ['I'],
-										'fields' => ['field2', 'field2.analyzed', 'field2.word_start']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Ferry',
+													'fields' => ['field2', 'field2.analyzed', 'field2.word_start'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -266,4 +294,108 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals($expected, $query->generate());
 	}
 
+	/**
+	 * @test
+	 */
+	public function it_should_generate_query_on_field_with_multiple_terms()
+	{
+		$model = 'Dummy';
+		$queryString = 'field1::Ivo,Ferry';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'bool' => [
+							'must' => [
+								[
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Ivo',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											],
+											[
+												'multi_match' => [
+													'query' => 'Ferry',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											]
+										]
+									]
+								]
+							],
+							'must_not' => []
+						]
+					]
+				]
+			]
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$this->assertEquals($expected, $query->generate());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_generate_and_or_query_on_field_with_multiple_terms()
+	{
+		$model = 'Dummy';
+		$queryString = 'field1::Ivo,Ferry|field1::Lennert';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'bool' => [
+							'must' => [
+								[
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Ivo',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											],
+											[
+												'multi_match' => [
+													'query' => 'Ferry',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											]
+										]
+									]
+								],
+								[
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'Lennert',
+													'fields' => ['field1', 'field1.analyzed'],
+													'type' => 'phrase'
+												]
+											]
+										]
+									]
+								]
+							],
+							'must_not' => []
+						]
+					]
+				]
+			]
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$this->assertEquals($expected, $query->generate());
+	}
 }
