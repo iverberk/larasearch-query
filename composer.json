@@ -1,0 +1,28 @@
+{
+    "name": "iverberk/larasearch-query",
+    "description": "Parse API query strings to Elasticsearch/Eloquent queries ",
+    "keywords": ["search", "elasticsearch", "eloquent"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivo Verberk"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "illuminate/support": "~4.2|~5.0",
+        "elasticsearch/elasticsearch": "~1.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Iverberk\\LarasearchQuery": "src/"
+        },
+        "classmap": [
+            "tests/Support/Stubs",
+            "tests/Support"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.4.*"
+    }
+}
