@@ -7,12 +7,10 @@ class ElasticsearchQuery extends AbstractQuery {
 	 */
 	public function generate()
 	{
-		$boolQuery = $this->generateBoolQuery();
+		$queryPart = $this->query ? $this->generateBoolQuery() : $this->generateMatchAllQuery();
 
 		$esQuery['query']['filtered'] = [
-			'query' => [
-				'bool' => $boolQuery
-			]
+			'query' => $queryPart
 		];
 
 		return $esQuery;
@@ -43,11 +41,14 @@ class ElasticsearchQuery extends AbstractQuery {
 
 						$klass = $this->class;
 
-						foreach($klass::$__es_config as $analyzer => $attributes)
+						if (property_exists($klass, '__es_config'))
 						{
-							if (in_array($field, $attributes))
+							foreach ($klass::$__es_config as $analyzer => $attributes)
 							{
-								$fields[] = $field . ".${analyzer}";
+								if (in_array($field, $attributes))
+								{
+									$fields[] = $field . ".${analyzer}";
+								}
 							}
 						}
 
@@ -80,11 +81,20 @@ class ElasticsearchQuery extends AbstractQuery {
 		}
 
 		$boolQuery = [
-			'must' => $must,
-			'must_not' => $mustNot
+			'bool' => [
+				'must' => $must,
+				'must_not' => $mustNot
+			]
 		];
 
 		return $boolQuery;
+	}
+
+	private function generateMatchAllQuery()
+	{
+		return [
+			'match_all' => []
+		];
 	}
 
 	private function generateFilter() {

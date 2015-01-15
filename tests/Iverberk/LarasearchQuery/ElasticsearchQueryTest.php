@@ -7,6 +7,28 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
+	public function it_should_generate_match_all_query_on_empty_input()
+	{
+		$model = 'Dummy';
+		$queryString = null;
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'match_all' => []
+					]
+				]
+			]
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$this->assertEquals($expected, $query->generate());
+	}
+
+	/**
+	 * @test
+	 */
 	public function it_should_generate_query_on_all_with_single_term()
 	{
 		$model = 'Dummy';
