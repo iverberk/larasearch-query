@@ -1,11 +1,11 @@
 <?php namespace Iverberk\LarasearchQuery;
 
-use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
+use Iverberk\LarasearchQuery\Exceptions\NotAllowedException;
 
 abstract class AbstractQuery {
 
 	/**
-	 * @var string
+	 * @var array
 	 */
 	protected $query;
 
@@ -75,14 +75,14 @@ abstract class AbstractQuery {
 			{
 				if (empty($value) || '-' == $value)
 				{
-					throw new NotAcceptableHttpException('Empty query part found');
+					throw new NotAllowedException('Empty query part found');
 				}
 
 				if (strpos($value, '-') === 0)
 				{
 					if (isset($queryPart['+']))
 					{
-						throw new NotAcceptableHttpException('Can not mix positive and negative searches in or clause.');
+						throw new NotAllowedException('Can not mix positive and negative searches in or clause.');
 					}
 
 					$queryPart['-'][] = substr($value, 1);
@@ -90,7 +90,7 @@ abstract class AbstractQuery {
 				{
 					if (isset($queryPart['-']))
 					{
-						throw new NotAcceptableHttpException('Can not mix positive and negative searches in or clause.');
+						throw new NotAllowedException('Can not mix positive and negative searches in or clause.');
 					}
 
 					$queryPart['+'][] = preg_replace('/^\\\-/', '-', $value);

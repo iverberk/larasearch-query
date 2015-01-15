@@ -16,7 +16,10 @@
     "autoload": {
         "psr-0": {
             "Iverberk\\LarasearchQuery": "src/"
-        }
+        },
+		"classmap": [
+			"tests/Support/Stubs"
+		]
     },
     "require-dev": {
         "phpunit/phpunit": "4.4.*"

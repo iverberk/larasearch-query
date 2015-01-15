@@ -3,91 +3,32 @@
 class ElasticsearchQuery extends AbstractQuery {
 
 	/**
-	 * @var array
-	 */
-	private $esQuery;
-
-	/**
 	 * @return mixed
 	 */
 	public function generate()
 	{
-		$this->generateQuery();
+		$boolQuery = $this->generateBoolQuery();
 
-//		foreach($this->query as $attribute => $value)
-//		{
-//			$negativeField =  false;
-//
-//			if (substr($attribute, 0, 1) === '-')
-//			{
-//				$negativeField = true;
-//				$attribute = substr($attribute, 1);
-//			}
-//
-//			if ($attribute === '_all')
-//			{
-//				$queryPart = [
-//					'terms' => [
-//						$attribute => $value
-//					]
-//				];
-//			}
-//			else
-//			{
-//				$fields = [$attribute, $attribute . ".analyzed"];
-//
-//				if (property_exists($this->class, '__es_config'))
-//				{
-//					$klass = $this->class;
-//
-//					foreach($klass::$__es_config as $analyzer => $attributes)
-//					{
-//						if (in_array($attribute, $attributes))
-//						{
-//							$fields[] = $attribute . ".${analyzer}";
-//						}
-//					}
-//				}
-//
-//				$queryPart = [
-//					'multi_match' => [
-//						'query' => $value,
-//						'fields' => $fields
-//					]
-//				];
-//			}
-//
-//			if ($negativeField)
-//			{
-//				$queryMustNot[] = $queryPart;
-//			}
-//			else
-//			{
-//				$queryMust[] = $queryPart;
-//			}
-//		}
-//
-//		$query['query']['filtered'] = [
-//			'query' => [
-//				'bool' => [
-//					'must' => $queryMust,
-//					'must_not' => $queryMustNot
-//				]
-//			]
-//		];
+		$esQuery['query']['filtered'] = [
+			'query' => [
+				'bool' => $boolQuery
+			]
+		];
 
-		return $this->esQuery;
+		return $esQuery;
 	}
 
-	private function generateQuery()
+	private function generateBoolQuery()
 	{
 		$must = [];
 		$mustNot = [];
 
 		foreach ($this->query as $field => $parts)
 		{
-			foreach ($parts as $part) {
-				foreach ($part as $posNeg => $values) {
+			foreach ($parts as $part)
+			{
+				foreach ($part as $posNeg => $values)
+				{
 					if ('_all' == $field)
 					{
 						$queryPart = [
@@ -98,34 +39,48 @@ class ElasticsearchQuery extends AbstractQuery {
 					}
 					else
 					{
+						$fields = [$field, $field . ".analyzed"];
+
+						$klass = $this->class;
+
+						foreach($klass::$__es_config as $analyzer => $attributes)
+						{
+							if (in_array($field, $attributes))
+							{
+								$fields[] = $field . ".${analyzer}";
+							}
+						}
+
 						$queryPart = [
 							'multi_match' => [
-								'query'
-								$field => array_map('strtolower', $values)
+								'query' => $values,
+								'fields' => $fields
 							]
 						];
 					}
 
-					if ('+' == $posNeg) {
+					if ('+' == $posNeg)
+					{
 						$must[] = $queryPart;
 					}
-					else {
+					else
+					{
 						$mustNot[] = $queryPart;
 					}
 				}
 			}
 		}
 
-		$this->esQuery['query']['filtered'] = [
-			'query' => [
-				'bool' => [
-					'must' => $must,
-					'must_not' => $mustNot
-				]
-			]
+		$boolQuery = [
+			'must' => $must,
+			'must_not' => $mustNot
 		];
+
+		return $boolQuery;
 	}
 
-	private function generateFilter() {}
+	private function generateFilter() {
+		
+	}
 
 }

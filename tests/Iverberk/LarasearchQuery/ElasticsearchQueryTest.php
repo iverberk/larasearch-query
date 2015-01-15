@@ -9,7 +9,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function it_should_generate_query_on_all_with_single_term()
 	{
-		$model = 'Eur\Ods\Bod\Emmployee\Models\Employee';
+		$model = 'Dummy';
 		$queryString = 'ivo';
 		$expected = [
 			'query' => [
@@ -40,7 +40,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function it_should_generate_or_query_on_all_with_multiple_terms()
 	{
-		$model = 'Eur\Ods\Bod\Emmployee\Models\Employee';
+		$model = 'Dummy';
 		$queryString = 'ivo,ferry';
 		$expected = [
 			'query' => [
@@ -71,7 +71,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function it_should_generate_query_on_all_with_lowercased_term()
 	{
-		$model = 'Eur\Ods\Bod\Emmployee\Models\Employee';
+		$model = 'Dummy';
 		$queryString = 'Ivo';
 		$expected = [
 			'query' => [
@@ -102,7 +102,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function it_should_generate_and_query_on_all_with_multiple_terms()
 	{
-		$model = 'Eur\Ods\Bod\Emmployee\Models\Employee';
+		$model = 'Dummy';
 		$queryString = 'ivo|ferry';
 		$expected = [
 			'query' => [
@@ -138,7 +138,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function it_should_generate_query_on_all_with_multiple_lowercased_terms()
 	{
-		$model = 'Eur\Ods\Bod\Emmployee\Models\Employee';
+		$model = 'Dummy';
 		$queryString = 'Ivo,Ferry';
 		$expected = [
 			'query' => [
@@ -167,10 +167,10 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 	/**
 	 * @test
 	 */
-	public function it_should_generate_and_query_on_initials_with_single_term()
+	public function it_should_generate_query_on_field_with_single_term()
 	{
-		$model = 'Eur\Ods\Bod\Emmployee\Models\Employee';
-		$queryString = 'initials::I';
+		$model = 'Dummy';
+		$queryString = 'field1::I';
 		$expected = [
 			'query' => [
 				'filtered' => [
@@ -180,7 +180,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 								[
 									'multi_match' => [
 										'query' => ['I'],
-										'fields' => ['initials', 'initials.analyzed']
+										'fields' => ['field1', 'field1.analyzed']
 									]
 								]
 							],
@@ -195,4 +195,75 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 
 		$this->assertEquals($expected, $query->generate());
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_generate_query__on_field_with_single_term_and_extra_analyzers()
+	{
+		$model = 'Dummy';
+		$queryString = 'field2::I';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'bool' => [
+							'must' => [
+								[
+									'multi_match' => [
+										'query' => ['I'],
+										'fields' => ['field2', 'field2.analyzed', 'field2.word_start']
+									]
+								]
+							],
+							'must_not' => []
+						]
+					]
+				]
+			]
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$this->assertEquals($expected, $query->generate());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_generate_and_query_on_fields_with_multiple_terms_and_extra_analyzers()
+	{
+		$model = 'Dummy';
+		$queryString = 'field1::F|field2::I';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'bool' => [
+							'must' => [
+								[
+									'multi_match' => [
+										'query' => ['F'],
+										'fields' => ['field1', 'field1.analyzed']
+									]
+								],
+								[
+									'multi_match' => [
+										'query' => ['I'],
+										'fields' => ['field2', 'field2.analyzed', 'field2.word_start']
+									]
+								]
+							],
+							'must_not' => []
+						]
+					]
+				]
+			]
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$this->assertEquals($expected, $query->generate());
+	}
+
 }

@@ -26,7 +26,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_search_query_string_with_mixed_negation()
 	{
@@ -147,7 +147,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_empty_value_part()
 	{
@@ -159,7 +159,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_negated_empty_value_part()
 	{
@@ -265,7 +265,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_empty_query_part()
 	{
@@ -277,7 +277,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_negated_empty_query_part()
 	{
@@ -331,7 +331,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_empty_value_part_with_fieldname()
 	{
@@ -343,7 +343,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 
 	/**
 	 * @test
-	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
+	 * @expectedException Iverberk\LarasearchQuery\Exceptions\NotAllowedException
 	 */
 	public function it_should_fail_on_negated_empty_value_part_with_fieldname()
 	{
