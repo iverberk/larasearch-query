@@ -19,33 +19,21 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
 
 	/**
 	 * @test
+	 * @expectedException Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException
 	 */
-	public function it_should_parse_search_query_string_with_negation()
+	public function it_should_fail_on_search_query_string_with_mixed_negation()
 	{
 		$test = 'ivo,-ferry';
-		$expected =  [
-			'_all' => [
-				[
-					'+' =>[
-						'ivo'
-					],
-					'-' =>[
-						'ferry'
-					]
-				]
-			]
-		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
-		$this->assertEquals($expected, $query->getQuery());
 	}
 
 	/**
@@ -56,7 +44,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 		$test = 'ivo\,ferry';
 		$expected =  [
 			'_all' => [
-					[
+				[
 					'+' =>[
 						'ivo,ferry'
 					]
@@ -64,7 +52,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -86,7 +74,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -108,7 +96,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -130,7 +118,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -140,21 +128,19 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	 */
 	public function it_should_parse_search_query_string_with_negation_followed_by_dash()
 	{
-		$test = 'ivo,--ferry';
+		$test = '-ivo,--ferry';
 		$expected =  [
 			'_all' => [
 				[
-					'+' =>[
-						'ivo'
-					],
 					'-' =>[
+						'ivo',
 						'-ferry'
 					]
 				]
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -167,7 +153,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo,,ferry';
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 	}
 
@@ -179,7 +165,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo,-,ferry';
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 	}
 
@@ -204,7 +190,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -230,7 +216,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -251,7 +237,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -272,7 +258,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -285,7 +271,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo||ferry';
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 	}
 
@@ -297,7 +283,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo|-|ferry';
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 	}
 
@@ -317,7 +303,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -338,7 +324,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
@@ -351,7 +337,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo::';
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 	}
 
@@ -363,7 +349,7 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo::-';
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 	}
 
@@ -390,8 +376,8 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 			]
 		];
 
-		$query = new \Eur\Ods\Support\Query\ElasticsearchQuery('');
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
-} 
+}

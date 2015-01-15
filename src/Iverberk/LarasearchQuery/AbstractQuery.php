@@ -21,7 +21,10 @@ abstract class AbstractQuery {
 	function __construct($class, $query = null)
 	{
 		$this->class = $class;
-		$this->query = $query;
+
+		if (null != $query) {
+			$this->setQuery($query);
+		}
 	}
 
 	/**
@@ -77,9 +80,19 @@ abstract class AbstractQuery {
 
 				if (strpos($value, '-') === 0)
 				{
+					if (isset($queryPart['+']))
+					{
+						throw new NotAcceptableHttpException('Can not mix positive and negative searches in or clause.');
+					}
+
 					$queryPart['-'][] = substr($value, 1);
 				} else
 				{
+					if (isset($queryPart['-']))
+					{
+						throw new NotAcceptableHttpException('Can not mix positive and negative searches in or clause.');
+					}
+
 					$queryPart['+'][] = preg_replace('/^\\\-/', '-', $value);
 				}
 			}
