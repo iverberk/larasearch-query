@@ -29,11 +29,7 @@ class ElasticsearchQuery extends AbstractQuery {
 				{
 					if ('_all' == $field)
 					{
-						$queryPart = [
-							'terms' => [
-								$field => array_map('strtolower', $values)
-							]
-						];
+						$fields = [$field];
 					}
 					else
 					{
@@ -51,31 +47,31 @@ class ElasticsearchQuery extends AbstractQuery {
 								}
 							}
 						}
-
-						$disMaxQueries = [];
-
-						foreach($values as $value)
-						{
-							$disMaxQueries[] = [
-								'multi_match' => [
-									'query' => $value,
-									'fields' => $fields,
-									'type' => 'phrase'
-								]
-							];
-						}
-
-						$queryPart['dis_max']['queries'] = $disMaxQueries;
 					}
 
-					if ('+' == $posNeg)
+					$disMaxQueries = [];
+
+					foreach($values as $value)
 					{
-						$must[] = $queryPart;
+						$disMaxQueries[] = [
+							'multi_match' => [
+								'query' => strtolower($value),
+								'fields' => $fields,
+								'type' => 'phrase'
+							]
+						];
 					}
-					else
-					{
-						$mustNot[] = $queryPart;
-					}
+
+					$queryPart['dis_max']['queries'] = $disMaxQueries;
+				}
+
+				if ('+' == $posNeg)
+				{
+					$must[] = $queryPart;
+				}
+				else
+				{
+					$mustNot[] = $queryPart;
 				}
 			}
 		}

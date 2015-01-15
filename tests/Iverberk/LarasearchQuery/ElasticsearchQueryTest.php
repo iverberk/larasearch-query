@@ -40,8 +40,16 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'terms' => [
-										'_all' => ['ivo']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -71,8 +79,23 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'terms' => [
-										'_all' => ['ivo', 'ferry']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											],
+											[
+												'multi_match' => [
+													'query' => 'ferry',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -102,8 +125,16 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'terms' => [
-										'_all' => ['ivo']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -133,13 +164,29 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'terms' => [
-										'_all' => ['ivo']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								],
 								[
-									'terms' => [
-										'_all' => ['ferry']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ferry',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -169,8 +216,23 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'bool' => [
 							'must' => [
 								[
-									'terms' => [
-										'_all' => ['ivo', 'ferry']
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											],
+											[
+												'multi_match' => [
+													'query' => 'ferry',
+													'fields' => ['_all'],
+													'type' => 'phrase'
+												]
+											]
+										]
 									]
 								]
 							],
@@ -204,7 +266,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Ivo',
+													'query' => 'ivo',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
@@ -243,7 +305,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Ivo',
+													'query' => 'ivo',
 													'fields' => ['field2', 'field2.analyzed', 'field2.word_start'],
 													'type' => 'phrase'
 												]
@@ -282,7 +344,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Ivo',
+													'query' => 'ivo',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
@@ -295,7 +357,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Ferry',
+													'query' => 'ferry',
 													'fields' => ['field2', 'field2.analyzed', 'field2.word_start'],
 													'type' => 'phrase'
 												]
@@ -334,14 +396,14 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Ivo',
+													'query' => 'ivo',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
 											],
 											[
 												'multi_match' => [
-													'query' => 'Ferry',
+													'query' => 'ferry',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
@@ -380,14 +442,14 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Ivo',
+													'query' => 'ivo',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
 											],
 											[
 												'multi_match' => [
-													'query' => 'Ferry',
+													'query' => 'ferry',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
@@ -400,7 +462,7 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 										'queries' => [
 											[
 												'multi_match' => [
-													'query' => 'Lennert',
+													'query' => 'lennert',
 													'fields' => ['field1', 'field1.analyzed'],
 													'type' => 'phrase'
 												]
