@@ -5,7 +5,7 @@ use Iverberk\LarasearchQuery\Exceptions\NotAllowedException;
 abstract class AbstractQuery {
 
 	/**
-	 * @var string
+	 * @var array
 	 */
 	protected $query;
 
@@ -15,16 +15,21 @@ abstract class AbstractQuery {
 	protected $class;
 
 	/**
-	 * @param string $query
-	 * @param $class
+	 * @var array
 	 */
-	function __construct($class, $query = null)
+	protected $sort;
+
+	/**
+	 * @param $class
+	 * @param string $query
+	 * @param null $sort
+	 */
+	function __construct($class, $query = null, $sort = null)
 	{
 		$this->class = $class;
 
-		if (null != $query) {
-			$this->setQuery($query);
-		}
+		if ($query) $this->setQuery($query);
+		if ($sort) $this->setSort($sort);
 	}
 
 	/**
@@ -46,6 +51,22 @@ abstract class AbstractQuery {
 	public function setQuery($query)
 	{
 		$this->query = $this->parseQuery($query);
+	}
+
+	/**
+	 * @return null
+	 */
+	public function getSort()
+	{
+		return $this->sort;
+	}
+
+	/**
+	 * @param null $sort
+	 */
+	public function setSort($sort)
+	{
+		$this->sort = $this->parseSort($sort);
 	}
 
 	/**
@@ -104,11 +125,42 @@ abstract class AbstractQuery {
 		return $query;
 	}
 
+	/**
+	 * @param $sortString
+	 * @return array
+	 */
+	private function parseSort($sortString)
+	{
+		$sort = [];
+		$fields = $this->splitString($sortString, ',');
+
+		foreach($fields as $field)
+		{
+			if (strpos($field, '-') === 0)
+			{
+				$sort[substr($field, 1)] = ['order' => 'desc'];
+			}
+			else
+			{
+				$sort[$field] = ['order' => 'asc'];
+			}
+		}
+
+		return $sort;
+	}
+
+	/**
+	 * @param $string
+	 * @param string $delimiter
+	 * @param int $limit
+	 * @return mixed
+	 */
 	protected function splitString($string, $delimiter = ',', $limit = -1)
 	{
 		$parts = preg_split('~(?<!\\\)' . preg_quote($delimiter, '~') . '~', $string, $limit);
 
 		return str_replace('\\' . $delimiter, $delimiter, $parts);
 	}
+
 }
 

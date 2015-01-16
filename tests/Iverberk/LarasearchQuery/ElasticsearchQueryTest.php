@@ -18,7 +18,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						'match_all' => []
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -57,7 +58,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -103,7 +105,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -142,7 +145,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -194,7 +198,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -240,7 +245,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -279,7 +285,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -318,7 +325,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -370,7 +378,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -416,7 +425,8 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -475,10 +485,38 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 						]
 					]
 				]
-			]
+			],
+			'sort' => []
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
+
+		$this->assertEquals($expected, $query->generate());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_generate_match_all_query_on_empty_input_with_sorting()
+	{
+		$model = 'Dummy';
+		$sortString = 'family_name';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'match_all' => []
+					]
+				],
+			],
+			'sort' => [
+				'family_name' => [
+					'order' => 'asc'
+				]
+			]
+		];
+
+		$query = new ElasticsearchQuery($model, null, $sortString);
 
 		$this->assertEquals($expected, $query->generate());
 	}

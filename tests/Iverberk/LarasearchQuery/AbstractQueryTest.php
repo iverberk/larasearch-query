@@ -380,4 +380,25 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 		$query->setQuery($test);
 		$this->assertEquals($expected, $query->getQuery());
 	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_parse_sort_string()
+	{
+		$test = 'lastname,-firstname';
+		$expected = [
+			'lastname' => [
+				'order' => 'asc'
+			],
+			'firstname' => [
+				'order' => 'desc'
+			]
+		];
+
+		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
+		$query->setSort($test);
+		$this->assertEquals($expected, $query->getSort());
+	}
+
 }

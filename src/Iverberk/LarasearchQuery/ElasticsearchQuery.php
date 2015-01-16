@@ -9,6 +9,8 @@ class ElasticsearchQuery extends AbstractQuery {
 	{
 		$queryPart = $this->query ? $this->generateBoolQuery() : $this->generateMatchAllQuery();
 
+		$esQuery['sort'] = $this->sort ?: [];
+
 		$esQuery['query']['filtered'] = [
 			'query' => $queryPart
 		];
@@ -16,6 +18,9 @@ class ElasticsearchQuery extends AbstractQuery {
 		return $esQuery;
 	}
 
+	/**
+	 * @return array
+	 */
 	private function generateBoolQuery()
 	{
 		$must = [];
@@ -86,6 +91,9 @@ class ElasticsearchQuery extends AbstractQuery {
 		return $boolQuery;
 	}
 
+	/**
+	 * @return array
+	 */
 	private function generateMatchAllQuery()
 	{
 		return [
@@ -93,6 +101,9 @@ class ElasticsearchQuery extends AbstractQuery {
 		];
 	}
 
+	/**
+	 *
+	 */
 	private function generateFilter() {
 
 	}
