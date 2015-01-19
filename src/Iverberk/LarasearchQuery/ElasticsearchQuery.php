@@ -10,6 +10,8 @@ class ElasticsearchQuery extends AbstractQuery {
 		$queryPart = $this->query ? $this->generateBoolQuery() : $this->generateMatchAllQuery();
 
 		$esQuery['sort'] = $this->sort ?: [];
+		$esQuery['from'] = ($this->page - 1) * $this->perPage;
+		$esQuery['size'] = $this->perPage;
 
 		$esQuery['query']['filtered'] = [
 			'query' => $queryPart

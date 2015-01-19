@@ -20,16 +20,30 @@ abstract class AbstractQuery {
 	protected $sort;
 
 	/**
+	 * @var integer
+	 */
+	protected $page = 1;
+
+	/**
+	 * @var integer
+	 */
+	protected $perPage = 50;
+
+	/**
 	 * @param $class
 	 * @param string $query
 	 * @param null $sort
+	 * @param null $page
+	 * @param null $perPage
 	 */
-	function __construct($class, $query = null, $sort = null)
+	function __construct($class, $query = null, $sort = null, $page = null, $perPage = null)
 	{
 		$this->class = $class;
 
 		if ($query) $this->setQuery($query);
 		if ($sort) $this->setSort($sort);
+		if ($page) $this->page = $page;
+		if ($perPage) $this->perPage = $perPage;
 	}
 
 	/**
