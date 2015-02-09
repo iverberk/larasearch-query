@@ -48,7 +48,8 @@ class ElasticsearchQuery extends AbstractQuery {
 							'multi_match' => [
 								'query' => strtolower($value),
 								'fields' => $fields,
-								'type' => 'phrase'
+								'type' => 'phrase',
+								'analyzer' => 'keyword'
 							]
 						];
 					}
