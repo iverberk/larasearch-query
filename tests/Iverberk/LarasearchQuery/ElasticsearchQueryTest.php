@@ -19,7 +19,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -59,7 +61,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -106,7 +110,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -146,7 +152,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -199,7 +207,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -246,7 +256,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -286,7 +298,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -326,7 +340,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -379,7 +395,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -426,7 +444,9 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
@@ -486,12 +506,15 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 					]
 				]
 			],
-			'sort' => []
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, $queryString);
 
-		$this->assertEquals($expected, $query->generate());
+		$actual = $query->generate();
+		$this->assertEquals($expected, $actual);
 	}
 
 	/**
@@ -513,11 +536,99 @@ class ElasticsearchQueryTest extends \PHPUnit_Framework_TestCase {
 				'family_name' => [
 					'order' => 'asc'
 				]
-			]
+			],
+			'from' => 0,
+			'size' => 50
 		];
 
 		$query = new ElasticsearchQuery($model, null, $sortString);
 
 		$this->assertEquals($expected, $query->generate());
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_generate_query_with_rewriten_aliases()
+	{
+		$model = 'Dummy';
+		$queryString = 'alias::Ivo';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'bool' => [
+							'must' => [
+								[
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['field3', 'field3.analyzed', 'field4', 'field4.analyzed'],
+													'type' => 'phrase'
+												]
+											]
+										]
+									]
+								]
+							],
+							'must_not' => []
+						]
+					]
+				]
+			],
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$actual = $query->generate();
+		$this->assertEquals($expected, $actual);
+	}
+
+	/**
+	 * @test
+	 */
+	public function it_should_generate_query_with_rewriten_aliases_and_extra_analyzers()
+	{
+		$model = 'Dummy';
+		$queryString = 'alias2::Ivo';
+		$expected = [
+			'query' => [
+				'filtered' => [
+					'query' => [
+						'bool' => [
+							'must' => [
+								[
+									'dis_max' => [
+										'queries' => [
+											[
+												'multi_match' => [
+													'query' => 'ivo',
+													'fields' => ['field2', 'field2.analyzed', 'field2.word_start'],
+													'type' => 'phrase'
+												]
+											]
+										]
+									]
+								]
+							],
+							'must_not' => []
+						]
+					]
+				]
+			],
+			'sort' => [],
+			'from' => 0,
+			'size' => 50
+		];
+
+		$query = new ElasticsearchQuery($model, $queryString);
+
+		$actual = $query->generate();
+		$this->assertEquals($expected, $actual);
 	}
 }

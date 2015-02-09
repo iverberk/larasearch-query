@@ -21,6 +21,8 @@ class ElasticsearchQuery extends AbstractQuery {
 	}
 
 	/**
+	 * Generate an elasticsearch bool query based on the current query
+	 * 
 	 * @return array
 	 */
 	private function generateBoolQuery()
@@ -30,31 +32,13 @@ class ElasticsearchQuery extends AbstractQuery {
 
 		foreach ($this->query as $field => $parts)
 		{
+			$aliases = $this->getFieldAliases($field);
+
 			foreach ($parts as $part)
 			{
 				foreach ($part as $posNeg => $values)
 				{
-					if ('_all' == $field)
-					{
-						$fields = [$field];
-					}
-					else
-					{
-						$fields = [$field, $field . ".analyzed"];
-
-						$klass = $this->class;
-
-						if (property_exists($klass, '__es_config'))
-						{
-							foreach ($klass::$__es_config as $analyzer => $attributes)
-							{
-								if (in_array($field, $attributes))
-								{
-									$fields[] = $field . ".${analyzer}";
-								}
-							}
-						}
-					}
+					$fields = $this->getFieldsInclAnalyzers($aliases);
 
 					$disMaxQueries = [];
 
@@ -91,6 +75,95 @@ class ElasticsearchQuery extends AbstractQuery {
 		];
 
 		return $boolQuery;
+	}
+
+	/**
+	 * Get the aliases for a search param
+	 *
+	 * @param $field the name of the search param
+	 *
+	 * @return array of field names
+	 */
+	private function getFieldAliases ($field)
+	{
+		$aliases  = [];
+
+		$klass = $this->class;
+
+		if (property_exists($klass, '__es_config'))
+		{
+			$esConfig = $klass::$__es_config;
+			if (isset($esConfig['fieldAliases'][$field]))
+			{
+				$aliases = $esConfig['fieldAliases'][$field];
+			}
+			else
+			{
+				array_push($aliases, $field);
+			}
+		}
+
+		return $aliases;
+	}
+
+	/**
+	 * Construct a list of fieldnames with all used analyzers for these fields
+	 *
+	 * @param array $fields list of fieldnames
+	 *
+	 * @return array fieldnames including al used analyzers
+	 */
+	private function getFieldsInclAnalyzers(array $fields)
+	{
+		$analyzers = [];
+
+		foreach($fields as $fieldName)
+		{
+			if ('_all' == $fieldName)
+			{
+				array_push($analyzers, $fieldName);
+			}
+			else
+			{
+				array_push($analyzers, $fieldName, $fieldName . ".analyzed");
+
+				$analyzerConfig = $this->getAnalyzerConfig();
+
+				foreach ($analyzerConfig as $analyzer => $attributes)
+				{
+					if (in_array($fieldName, $attributes))
+					{
+						array_push($analyzers, $fieldName . ".${analyzer}");
+					}
+				}
+			}
+		}
+
+		return $analyzers;
+	}
+
+	/**
+	 * Get the config for all used analyzers
+	 *
+	 * @return array list of analyzers with corresponding fieldnames
+	 */
+	private function getAnalyzerConfig()
+	{
+		$analyzers = [];
+
+		$klass = $this->class;
+
+		if (property_exists($klass, '__es_config'))
+		{
+			$esConfig = $klass::$__es_config;
+
+			if (isset($esConfig['analyzers']))
+			{
+				$analyzers = $esConfig['analyzers'];
+			}
+		}
+
+		return $analyzers;
 	}
 
 	/**
