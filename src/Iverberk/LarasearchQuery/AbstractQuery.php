@@ -102,10 +102,11 @@ abstract class AbstractQuery {
 			// Determine field
 			$fieldValue = $this->splitString($part, '::', 2);
 
-			$field = count($fieldValue) == 2 ? $fieldValue[0] : '_all';
+			$fieldString = count($fieldValue) == 2 ? $fieldValue[0] : '_all';
 			$valueString = count($fieldValue) == 2 ? $fieldValue[1] : $fieldValue[0];
 
 			// Split on ,
+			$fields = $this->splitString($fieldString, ',');
 			$values = $this->splitString($valueString, ',');
 			foreach ($values as $value)
 			{
@@ -133,7 +134,7 @@ abstract class AbstractQuery {
 				}
 			}
 
-			$query[$field][] = $queryPart;
+			$query[] = ['fields' => $fields, 'query' => $queryPart];
 		}
 
 		return $query;
