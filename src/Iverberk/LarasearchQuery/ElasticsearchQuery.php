@@ -22,7 +22,7 @@ class ElasticsearchQuery extends AbstractQuery {
 
 	/**
 	 * Generate an elasticsearch bool query based on the current query
-	 * 
+	 *
 	 * @return array
 	 */
 	private function generateBoolQuery()
@@ -30,41 +30,42 @@ class ElasticsearchQuery extends AbstractQuery {
 		$must = [];
 		$mustNot = [];
 
-		foreach ($this->query as $field => $parts)
+		foreach ($this->query as $section)
 		{
-			$aliases = $this->getFieldAliases($field);
-
-			foreach ($parts as $part)
+			$aliases = [];
+			foreach ($section['fields'] as $field)
 			{
-				foreach ($part as $posNeg => $values)
+				$aliases = array_merge($aliases, $this->getFieldAliases($field));
+			}
+
+			foreach ($section['query'] as $posNeg => $values)
+			{
+				$fields = $this->getFieldsInclAnalyzers($aliases);
+
+				$disMaxQueries = [];
+
+				foreach($values as $value)
 				{
-					$fields = $this->getFieldsInclAnalyzers($aliases);
-
-					$disMaxQueries = [];
-
-					foreach($values as $value)
-					{
-						$disMaxQueries[] = [
-							'multi_match' => [
-								'query' => strtolower($value),
-								'fields' => $fields,
-								'type' => 'phrase',
-								'analyzer' => 'keyword'
-							]
-						];
-					}
-
-					$queryPart['dis_max']['queries'] = $disMaxQueries;
+					$disMaxQueries[] = [
+						'multi_match' => [
+							'query' => strtolower($value),
+							'fields' => $fields,
+							'type' => 'phrase',
+							'analyzer' => 'keyword'
+						]
+					];
 				}
 
-				if ('+' == $posNeg)
-				{
-					$must[] = $queryPart;
-				}
-				else
-				{
-					$mustNot[] = $queryPart;
-				}
+				$queryPart['dis_max']['queries'] = $disMaxQueries;
+			}
+
+			if ('+' == $posNeg)
+			{
+				$must[] = $queryPart;
+			}
+			else
+			{
+				$mustNot[] = $queryPart;
 			}
 		}
 

@@ -8,16 +8,17 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_parse_search_query_string_without_negation()
 	{
 		$test = 'ivo,ferry';
-		$expected =  [
-			'_all' => [
-				[
-					'+' =>[
-						'ivo',
-						'ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo',
+					'ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -42,15 +43,17 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_parse_search_query_string_with_escaped_delimiter()
 	{
 		$test = 'ivo\,ferry';
-		$expected =  [
-			'_all' => [
-				[
-					'+' =>[
-						'ivo,ferry'
-					]
+
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo,ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -63,16 +66,18 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_parse_search_query_string_with_escaped_and_unescaped_delimiter()
 	{
 		$test = 'ivo,ferry\,lennert';
-		$expected =  [
-			'_all' => [
-				[
-					'+' =>[
-						'ivo',
-						'ferry,lennert'
-					]
+
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo',
+					'ferry,lennert'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -85,16 +90,17 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_parse_search_query_string_with_escaped_negation()
 	{
 		$test = 'ivo,\-ferry';
-		$expected =  [
-			'_all' => [
-				[
-					'+' =>[
-						'ivo',
-						'-ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo',
+					'-ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -107,16 +113,17 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_parse_search_query_string_with_escaped_negation_and_slash_dash()
 	{
 		$test = 'ivo,\-fe\-rry';
-		$expected =  [
-			'_all' => [
-				[
-					'+' =>[
-						'ivo',
-						'-fe\-rry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo',
+					'-fe\-rry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -129,16 +136,17 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_parse_search_query_string_with_negation_followed_by_dash()
 	{
 		$test = '-ivo,--ferry';
-		$expected =  [
-			'_all' => [
-				[
-					'-' =>[
-						'ivo',
-						'-ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'-' =>[
+					'ivo',
+					'-ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -176,13 +184,21 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo|ferry';
 		$expected = [
-			'_all' => [
-				[
+			[
+				'fields' => [
+					'_all'
+				],
+				'query'  => [
 					'+' => [
 						'ivo'
 					]
+				]
+			],
+			[
+				'fields' => [
+					'_all'
 				],
-				[
+				'query'  => [
 					'+' => [
 						'ferry'
 					]
@@ -202,13 +218,21 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo|-ferry';
 		$expected = [
-			'_all' => [
-				[
+			[
+				'fields' => [
+					'_all'
+				],
+				'query'  => [
 					'+' => [
 						'ivo'
 					]
+				]
+			],
+			[
+				'fields' => [
+					'_all'
 				],
-				[
+				'query'  => [
 					'-' => [
 						'ferry'
 					]
@@ -227,15 +251,16 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_not_split_on_escaped_pipe_delimiter()
 	{
 		$test = 'ivo\|ferry';
-		$expected = [
-			'_all' => [
-				[
-					'+' => [
-						'ivo|ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo|ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -248,15 +273,16 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_not_split_on_start_with_escaped_pipe_delimiter()
 	{
 		$test = '\|ferry';
-		$expected = [
-			'_all' => [
-				[
-					'+' => [
-						'|ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'|ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -293,15 +319,16 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_split_on_double_colon()
 	{
 		$test = 'ivo::ferry';
-		$expected = [
-			'ivo' => [
-				[
-					'+' => [
-						'ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'ivo'
+			],
+			'query' => [
+				'+' =>[
+					'ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -314,15 +341,16 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	public function it_should_not_split_on_escaped_double_colon()
 	{
 		$test = 'ivo\::ferry';
-		$expected = [
-			'_all' => [
-				[
-					'+' => [
-						'ivo::ferry'
-					]
+		$expected = [[
+			'fields' => [
+				'_all'
+			],
+			'query' => [
+				'+' =>[
+					'ivo::ferry'
 				]
 			]
-		];
+		]];
 
 		$query = new \Iverberk\LarasearchQuery\ElasticsearchQuery('');
 		$query->setQuery($test);
@@ -360,16 +388,22 @@ class AbstractQueryTest extends \PHPUnit_Framework_TestCase {
 	{
 		$test = 'ivo::ferry|lennert';
 		$expected = [
-			'ivo' => [
-				[
-					'+' => [
+			[
+				'fields' => [
+					'ivo'
+				],
+				'query' => [
+					'+' =>[
 						'ferry'
 					]
 				]
 			],
-			'_all' => [
-				[
-					'+' => [
+			[
+				'fields' => [
+					'_all'
+				],
+				'query' => [
+					'+' =>[
 						'lennert'
 					]
 				]
